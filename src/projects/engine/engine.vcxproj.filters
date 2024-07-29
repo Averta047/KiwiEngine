@@ -1,0 +1,42 @@
+﻿<?xml version="1.0" encoding="utf-8"?>
+<Project ToolsVersion="4.0" xmlns="http://schemas.microsoft.com/developer/msbuild/2003">
+  <ItemGroup>
+    <Filter Include="engine">
+      <UniqueIdentifier>{84a6d051-2e28-4ed4-a0c2-02b18b3c562d}</UniqueIdentifier>
+    </Filter>
+    <Filter Include="engine\renderer">
+      <UniqueIdentifier>{cf63baef-1ecb-4b97-aab4-8dbf75430a47}</UniqueIdentifier>
+    </Filter>
+  </ItemGroup>
+  <ItemGroup>
+    <ClCompile Include="Main.cpp">
+      <Filter>engine</Filter>
+    </ClCompile>
+    <ClCompile Include="CSystem.cpp">
+      <Filter>engine</Filter>
+    </ClCompile>
+    <ClCompile Include="CInput.cpp">
+      <Filter>engine</Filter>
+    </ClCompile>
+    <ClCompile Include="CApplication.cpp">
+      <Filter>engine</Filter>
+    </ClCompile>
+    <ClCompile Include="renderer\CDirect3D11.cpp">
+      <Filter>engine\renderer</Filter>
+    </ClCompile>
+  </ItemGroup>
+  <ItemGroup>
+    <ClInclude Include="CSystem.h">
+      <Filter>engine</Filter>
+    </ClInclude>
+    <ClInclude Include="CInput.h">
+      <Filter>engine</Filter>
+    </ClInclude>
+    <ClInclude Include="CApplication.h">
+      <Filter>engine</Filter>
+    </ClInclude>
+    <ClInclude Include="renderer\CDirect3D11.h">
+      <Filter>engine\renderer</Filter>
+    </ClInclude>
+  </ItemGroup>
+</Project>
