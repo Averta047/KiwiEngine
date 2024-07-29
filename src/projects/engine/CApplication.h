@@ -7,6 +7,9 @@
 #pragma once
 
 #include "renderer/CDirect3D11.h"
+#include "renderer/CD3DCamera.h"
+#include "renderer/CD3DModel.h"
+#include "renderer/shaders/CColorShader.h"
 
 const bool FULL_SCREEN = false;
 const bool VSYNC_ENABLED = true;
@@ -28,4 +31,7 @@ private:
 
 private:
 	CDirect3D* m_pDirect3D;
+	CD3DCamera* m_pD3DCamera;
+	CD3DModel* m_pD3DModel;
+	CColorShader* m_pColorShader;
 };

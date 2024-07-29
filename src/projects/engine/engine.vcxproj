@@ -86,13 +86,19 @@
     <ClCompile Include="CInput.cpp" />
     <ClCompile Include="CSystem.cpp" />
     <ClCompile Include="Main.cpp" />
+    <ClCompile Include="renderer\CD3DCamera.cpp" />
+    <ClCompile Include="renderer\CD3DModel.cpp" />
     <ClCompile Include="renderer\CDirect3D11.cpp" />
+    <ClCompile Include="renderer\shaders\CColorShader.cpp" />
   </ItemGroup>
   <ItemGroup>
     <ClInclude Include="CApplication.h" />
     <ClInclude Include="CInput.h" />
     <ClInclude Include="CSystem.h" />
+    <ClInclude Include="renderer\CD3DCamera.h" />
+    <ClInclude Include="renderer\CD3DModel.h" />
     <ClInclude Include="renderer\CDirect3D11.h" />
+    <ClInclude Include="renderer\shaders\CColorShader.h" />
   </ItemGroup>
   <Import Project="$(VCTargetsPath)\Microsoft.Cpp.targets" />
   <ImportGroup Label="ExtensionTargets">
