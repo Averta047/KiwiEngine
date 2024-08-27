@@ -9,7 +9,8 @@
 #include "renderer/CDirect3D11.h"
 #include "renderer/CD3DCamera.h"
 #include "renderer/CD3DModel.h"
-#include "renderer/shaders/CColorShader.h"
+#include "renderer/CD3DLight.h"
+#include "renderer/shaders/CLightShader.h"
 
 const bool FULL_SCREEN = false;
 const bool VSYNC_ENABLED = true;
@@ -27,11 +28,14 @@ public:
 	bool Frame();
 
 private:
-	bool Render();
+	bool Render(float rotation);
 
 private:
 	CDirect3D* m_pDirect3D;
 	CD3DCamera* m_pD3DCamera;
 	CD3DModel* m_pD3DModel;
-	CColorShader* m_pColorShader;
+	CD3DLight* m_pD3DLight;
+	//CColorShader* m_pColorShader;
+	//CTextureShader* m_pTextureShader;
+	CLightShader* m_pLightShader;
 };

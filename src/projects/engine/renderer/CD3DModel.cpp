@@ -10,19 +10,35 @@ CD3DModel::CD3DModel()
 {
 	m_pVertexBuffer = 0;
 	m_pIndexBuffer = 0;
+
+	m_pD3DTexture = 0;
+	m_pModel = 0;
 }
 
 CD3DModel::~CD3DModel()
 {
 }
 
-bool CD3DModel::Initialize(ID3D11Device* pDevice)
+bool CD3DModel::Initialize(ID3D11Device* pDevice, ID3D11DeviceContext* pDeviceContext, char* ModelFileName, char* TextureFileName)
 {
 	bool result;
 
+	// Load in the model data.
+	result = LoadModel(ModelFileName);
+	if (!result)
+	{
+		return false;
+	}
 
 	// Initialize the vertex and index buffers.
 	result = InitializeBuffers(pDevice);
+	if (!result)
+	{
+		return false;
+	}
+
+	// Load the texture for this model.
+	result = LoadTexture(pDevice, pDeviceContext, TextureFileName);
 	if (!result)
 	{
 		return false;
@@ -33,10 +49,14 @@ bool CD3DModel::Initialize(ID3D11Device* pDevice)
 
 void CD3DModel::Shutdown()
 {
+	// Release the model texture.
+	ReleaseTexture();
+
+	// Release the model texture.
+	ReleaseTexture();
+
 	// Shutdown the vertex and index buffers.
 	ShutdownBuffers();
-
-	return;
 }
 
 void CD3DModel::Render(ID3D11DeviceContext* pDeviceContext)
@@ -47,6 +67,11 @@ void CD3DModel::Render(ID3D11DeviceContext* pDeviceContext)
 	return;
 }
 
+ID3D11ShaderResourceView* CD3DModel::GetTexture()
+{
+	return m_pD3DTexture->GetTexture();
+}
+
 bool CD3DModel::InitializeBuffers(ID3D11Device* pDevice)
 {
 	VertexType* pVertices;
@@ -54,12 +79,6 @@ bool CD3DModel::InitializeBuffers(ID3D11Device* pDevice)
 	D3D11_BUFFER_DESC VertexBufferDesc, IndexBufferDesc;
 	D3D11_SUBRESOURCE_DATA VertexData, IndexData;
 	HRESULT hResult;
-
-	// Set the number of vertices in the vertex array.
-	m_iVertexCount = 3;
-
-	// Set the number of indices in the index array.
-	m_iIndexCount = 3;
 
 	// Create the vertex array.
 	pVertices = new VertexType[m_iVertexCount];
@@ -75,20 +94,15 @@ bool CD3DModel::InitializeBuffers(ID3D11Device* pDevice)
 		return false;
 	}
 
-	// Load the vertex array with data.
-	pVertices[0].position = XMFLOAT3(-1.0f, -1.0f, 0.0f);  // Bottom left.
-	pVertices[0].color = XMFLOAT4(0.0f, 1.0f, 0.0f, 1.0f);
+	// Load the vertex array and index array with data.
+	for (int i = 0; i < m_iVertexCount; i++)
+	{
+		pVertices[i].position = XMFLOAT3(m_pModel[i].x, m_pModel[i].y, m_pModel[i].z);
+		pVertices[i].texture = XMFLOAT2(m_pModel[i].tu, m_pModel[i].tv);
+		pVertices[i].normal = XMFLOAT3(m_pModel[i].nx, m_pModel[i].ny, m_pModel[i].nz);
 
-	pVertices[1].position = XMFLOAT3(0.0f, 1.0f, 0.0f);  // Top middle.
-	pVertices[1].color = XMFLOAT4(0.0f, 1.0f, 0.0f, 1.0f);
-
-	pVertices[2].position = XMFLOAT3(1.0f, -1.0f, 0.0f);  // Bottom right.
-	pVertices[2].color = XMFLOAT4(0.0f, 1.0f, 0.0f, 1.0f);
-
-	// Load the index array with data.
-	indices[0] = 0;  // Bottom left.
-	indices[1] = 1;  // Top middle.
-	indices[2] = 2;  // Bottom right.
+		indices[i] = i;
+	}
 
 	// Set up the description of the static vertex buffer.
 	VertexBufferDesc.Usage = D3D11_USAGE_DEFAULT;
@@ -175,4 +189,98 @@ void CD3DModel::RenderBuffers(ID3D11DeviceContext* pDeviceContext)
 
 	// Set the type of primitive that should be rendered from this vertex buffer, in this case triangles.
 	pDeviceContext->IASetPrimitiveTopology(D3D11_PRIMITIVE_TOPOLOGY_TRIANGLELIST);
+}
+
+bool CD3DModel::LoadTexture(ID3D11Device* pDevice, ID3D11DeviceContext* pDeviceContext, char* filename)
+{
+	bool result;
+
+
+	// Create and initialize the texture object.
+	m_pD3DTexture = new CD3DTexture;
+
+	result = m_pD3DTexture->Initialize(pDevice, pDeviceContext, filename);
+	if (!result)
+	{
+		return false;
+	}
+
+	return true;
+}
+
+void CD3DModel::ReleaseTexture()
+{
+	// Release the texture object.
+	if (m_pD3DTexture)
+	{
+		m_pD3DTexture->Shutdown();
+		delete m_pD3DTexture;
+		m_pD3DTexture = 0;
+	}
+}
+
+bool CD3DModel::LoadModel(char* filename)
+{
+	std::ifstream fin;
+	char input;
+	int i;
+
+
+	// Open the model file.
+	fin.open(filename);
+
+	// If it could not open the file then exit.
+	if (fin.fail())
+	{
+		return false;
+	}
+
+	// Read up to the value of vertex count.
+	fin.get(input);
+	while (input != ':')
+	{
+		fin.get(input);
+	}
+
+	// Read in the vertex count.
+	fin >> m_iVertexCount;
+
+	// Set the number of indices to be the same as the vertex count.
+	m_iIndexCount = m_iVertexCount;
+
+	// Create the model using the vertex count that was read in.
+	m_pModel = new ModelType[m_iVertexCount];
+
+	// Read up to the beginning of the data.
+	fin.get(input);
+	while (input != ':')
+	{
+		fin.get(input);
+	}
+	fin.get(input);
+	fin.get(input);
+
+	// Read in the vertex data.
+	for (i = 0; i < m_iVertexCount; i++)
+	{
+		fin >> m_pModel[i].x >> m_pModel[i].y >> m_pModel[i].z;
+		fin >> m_pModel[i].tu >> m_pModel[i].tv;
+		fin >> m_pModel[i].nx >> m_pModel[i].ny >> m_pModel[i].nz;
+	}
+
+	// Close the model file.
+	fin.close();
+
+	return true;
+}
+
+void CD3DModel::ReleaseModel()
+{
+	if (m_pModel)
+	{
+		delete[] m_pModel;
+		m_pModel = 0;
+	}
+
+	return;
 }
