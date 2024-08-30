@@ -9,6 +9,7 @@
 
 CApplication::CApplication()
 {
+	m_pGui = 0;
 	m_pDirect3D = 0;
 	m_pD3DCamera = 0;
 	m_pD3DModel = 0;
@@ -35,6 +36,14 @@ bool CApplication::Initialize(int iScreenWidth, int iScreenHeight, HWND hWnd)
 	if (!result)
 	{
 		MessageBox(hWnd, "Could not initialize Direct3D", "Error", MB_OK);
+		return false;
+	}
+
+	m_pGui = new CGui();
+	result = m_pGui->Initialize(hWnd, m_pDirect3D->GetDevice(), m_pDirect3D->GetDeviceContext());
+	if (!result)
+	{
+		MessageBox(hWnd, "Could not initialize Dear ImGui", "Error", MB_OK);
 		return false;
 	}
 
@@ -115,6 +124,13 @@ void CApplication::Shutdown()
 	}
 	*/
 
+	if (m_pGui)
+	{
+		m_pGui->Shutdown();
+		delete m_pGui;
+		m_pGui = 0;
+	}
+	
 	if (m_pD3DLight)
 	{
 		delete m_pD3DLight;
@@ -165,18 +181,10 @@ void CApplication::Shutdown()
 
 bool CApplication::Frame()
 {
-	static float rotation = 0.0f;
 	bool result;
 
-	// Update the rotation variable each frame.
-	rotation -= 0.0174532925f * 0.1f;
-	if (rotation < 0.0f)
-	{
-		rotation += 360.0f;
-	}
-
 	// Render the graphics scene.
-	result = Render(rotation);
+	result = Render();
 	if (!result)
 	{
 		return false;
@@ -185,7 +193,7 @@ bool CApplication::Frame()
 	return true;
 }
 
-bool CApplication::Render(float rotation)
+bool CApplication::Render()
 {
 	XMMATRIX WorldMatrix, ViewMatrix, ProjectionMatrix, RotateMatrix, TranslateMatrix, ScaleMatrix, SrMatrix;
 	bool result;
@@ -202,11 +210,15 @@ bool CApplication::Render(float rotation)
 	m_pD3DCamera->GetViewMatrix(ViewMatrix);
 	m_pDirect3D->GetProjectionMatrix(ProjectionMatrix);
 
-	RotateMatrix = XMMatrixRotationY(rotation);  // Build the rotation matrix.
+	RotateMatrix = XMMatrixRotationX(Cube_Rotation_X) *
+		XMMatrixRotationY(Cube_Rotation_Y) *
+		XMMatrixRotationZ(Cube_Rotation_Z);
     TranslateMatrix = XMMatrixTranslation(-2.0f, 0.0f, 0.0f);  // Build the translation matrix.
 
     // Multiply them together to create the final world transformation matrix.
-	WorldMatrix = XMMatrixRotationY(rotation);
+	WorldMatrix = XMMatrixRotationX(Cube_Rotation_X) *
+		XMMatrixRotationY(Cube_Rotation_Y) *
+		XMMatrixRotationZ(Cube_Rotation_Z);
 
 	// Put the model vertex and index buffers on the graphics pipeline to prepare them for drawing.
 	m_pD3DModel->Render(m_pDirect3D->GetDeviceContext());
@@ -219,27 +231,16 @@ bool CApplication::Render(float rotation)
 		return false;
 	}
 
-	ScaleMatrix = XMMatrixScaling(0.5f, 0.5f, 0.5f);  // Build the scaling matrix.
-	RotateMatrix = XMMatrixRotationY(rotation);  // Build the rotation matrix.
-	TranslateMatrix = XMMatrixTranslation(2.0f, 0.0f, 0.0f);  // Build the translation matrix.
-
-	// Multiply the scale, rotation, and translation matrices together to create the final world transformation matrix.
-	SrMatrix = XMMatrixMultiply(ScaleMatrix, RotateMatrix);
-	WorldMatrix = XMMatrixMultiply(SrMatrix, TranslateMatrix);
-
-	// Put the model vertex and index buffers on the graphics pipeline to prepare them for drawing.
-	m_pD3DModel->Render(m_pDirect3D->GetDeviceContext());
-
-	// Render the model using the light shader.
-	result = m_pLightShader->Render(m_pDirect3D->GetDeviceContext(), m_pD3DModel->GetIndexCount(), WorldMatrix, ViewMatrix, ProjectionMatrix, m_pD3DModel->GetTexture(),
-		m_pD3DLight->GetDirection(), m_pD3DLight->GetDiffuseColor());
-	if (!result)
-	{
-		return false;
-	}
+	// Render Gui on top.
+	m_pGui->Render();
 
 	// Present the rendered scene to the screen.
 	m_pDirect3D->EndScene();
 
 	return true;
+}
+
+LRESULT CALLBACK CApplication::MessageHandler(HWND hwnd, UINT umsg, WPARAM wparam, LPARAM lparam)
+{
+	return m_pGui->MessageHandler(hwnd, umsg, wparam, lparam);
 }

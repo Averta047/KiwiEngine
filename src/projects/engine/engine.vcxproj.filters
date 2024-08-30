@@ -10,6 +10,15 @@
     <Filter Include="engine\renderer\shaders">
       <UniqueIdentifier>{d399c640-e167-46cd-8de6-bf0880b2993f}</UniqueIdentifier>
     </Filter>
+    <Filter Include="vendors">
+      <UniqueIdentifier>{1c6b0a6f-e6f8-4324-980c-4f3d0bc797ce}</UniqueIdentifier>
+    </Filter>
+    <Filter Include="vendors\imgui">
+      <UniqueIdentifier>{16df965b-42d6-404f-b3b8-1c3508a651b0}</UniqueIdentifier>
+    </Filter>
+    <Filter Include="vendors\imgui\backends">
+      <UniqueIdentifier>{7df32b0d-710a-4ad5-8cbf-712bc01e47e5}</UniqueIdentifier>
+    </Filter>
   </ItemGroup>
   <ItemGroup>
     <ClCompile Include="Main.cpp">
@@ -42,6 +51,30 @@
     <ClCompile Include="renderer\CD3DLight.cpp">
       <Filter>engine\renderer</Filter>
     </ClCompile>
+    <ClCompile Include="CGui.cpp">
+      <Filter>engine</Filter>
+    </ClCompile>
+    <ClCompile Include="..\..\vendors\imgui\imgui.cpp">
+      <Filter>vendors\imgui</Filter>
+    </ClCompile>
+    <ClCompile Include="..\..\vendors\imgui\imgui_demo.cpp">
+      <Filter>vendors\imgui</Filter>
+    </ClCompile>
+    <ClCompile Include="..\..\vendors\imgui\imgui_draw.cpp">
+      <Filter>vendors\imgui</Filter>
+    </ClCompile>
+    <ClCompile Include="..\..\vendors\imgui\imgui_tables.cpp">
+      <Filter>vendors\imgui</Filter>
+    </ClCompile>
+    <ClCompile Include="..\..\vendors\imgui\imgui_widgets.cpp">
+      <Filter>vendors\imgui</Filter>
+    </ClCompile>
+    <ClCompile Include="..\..\vendors\imgui\backends\imgui_impl_dx11.cpp">
+      <Filter>vendors\imgui\backends</Filter>
+    </ClCompile>
+    <ClCompile Include="..\..\vendors\imgui\backends\imgui_impl_win32.cpp">
+      <Filter>vendors\imgui\backends</Filter>
+    </ClCompile>
   </ItemGroup>
   <ItemGroup>
     <ClInclude Include="CSystem.h">
@@ -70,6 +103,33 @@
     </ClInclude>
     <ClInclude Include="renderer\CD3DLight.h">
       <Filter>engine\renderer</Filter>
+    </ClInclude>
+    <ClInclude Include="CGui.h">
+      <Filter>engine</Filter>
+    </ClInclude>
+    <ClInclude Include="..\..\vendors\imgui\imconfig.h">
+      <Filter>vendors\imgui</Filter>
+    </ClInclude>
+    <ClInclude Include="..\..\vendors\imgui\imgui.h">
+      <Filter>vendors\imgui</Filter>
+    </ClInclude>
+    <ClInclude Include="..\..\vendors\imgui\imgui_internal.h">
+      <Filter>vendors\imgui</Filter>
+    </ClInclude>
+    <ClInclude Include="..\..\vendors\imgui\imstb_rectpack.h">
+      <Filter>vendors\imgui</Filter>
+    </ClInclude>
+    <ClInclude Include="..\..\vendors\imgui\imstb_textedit.h">
+      <Filter>vendors\imgui</Filter>
+    </ClInclude>
+    <ClInclude Include="..\..\vendors\imgui\imstb_truetype.h">
+      <Filter>vendors\imgui</Filter>
+    </ClInclude>
+    <ClInclude Include="..\..\vendors\imgui\backends\imgui_impl_dx11.h">
+      <Filter>vendors\imgui\backends</Filter>
+    </ClInclude>
+    <ClInclude Include="..\..\vendors\imgui\backends\imgui_impl_win32.h">
+      <Filter>vendors\imgui\backends</Filter>
     </ClInclude>
   </ItemGroup>
 </Project>

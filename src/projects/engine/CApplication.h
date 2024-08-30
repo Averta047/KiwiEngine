@@ -1,10 +1,12 @@
 //========= Copyright KiwiEngine, All rights reserved ============//
 //
-// Purpose: 
+// Purpose: Rename this to CRenderer
 //
 //================================================================//
 
 #pragma once
+
+#include "CGui.h"
 
 #include "renderer/CDirect3D11.h"
 #include "renderer/CD3DCamera.h"
@@ -27,8 +29,13 @@ public:
 	void Shutdown();
 	bool Frame();
 
+	LRESULT CALLBACK MessageHandler(HWND hWnd, UINT msg, WPARAM wParam, LPARAM lParam); // delete me
+
 private:
-	bool Render(float rotation);
+	bool Render();
+
+private:
+	CGui* m_pGui; // don't keep this
 
 private:
 	CDirect3D* m_pDirect3D;

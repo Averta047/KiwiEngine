@@ -58,6 +58,7 @@
       <PreprocessorDefinitions>_DEBUG;NCONSOLE;%(PreprocessorDefinitions)</PreprocessorDefinitions>
       <ConformanceMode>true</ConformanceMode>
       <LanguageStandard>stdcpp20</LanguageStandard>
+      <AdditionalIncludeDirectories>$(SolutionDir)vendors\imgui;$(SolutionDir)vendors\imgui\backends;%(AdditionalIncludeDirectories)</AdditionalIncludeDirectories>
     </ClCompile>
     <Link>
       <SubSystem>Windows</SubSystem>
@@ -73,6 +74,7 @@
       <PreprocessorDefinitions>NDEBUG;NCONSOLE;%(PreprocessorDefinitions)</PreprocessorDefinitions>
       <ConformanceMode>true</ConformanceMode>
       <LanguageStandard>stdcpp20</LanguageStandard>
+      <AdditionalIncludeDirectories>$(SolutionDir)vendors\imgui;$(SolutionDir)vendors\imgui\backends;%(AdditionalIncludeDirectories)</AdditionalIncludeDirectories>
     </ClCompile>
     <Link>
       <SubSystem>Windows</SubSystem>
@@ -82,7 +84,15 @@
     </Link>
   </ItemDefinitionGroup>
   <ItemGroup>
+    <ClCompile Include="..\..\vendors\imgui\backends\imgui_impl_dx11.cpp" />
+    <ClCompile Include="..\..\vendors\imgui\backends\imgui_impl_win32.cpp" />
+    <ClCompile Include="..\..\vendors\imgui\imgui.cpp" />
+    <ClCompile Include="..\..\vendors\imgui\imgui_demo.cpp" />
+    <ClCompile Include="..\..\vendors\imgui\imgui_draw.cpp" />
+    <ClCompile Include="..\..\vendors\imgui\imgui_tables.cpp" />
+    <ClCompile Include="..\..\vendors\imgui\imgui_widgets.cpp" />
     <ClCompile Include="CApplication.cpp" />
+    <ClCompile Include="CGui.cpp" />
     <ClCompile Include="CInput.cpp" />
     <ClCompile Include="CSystem.cpp" />
     <ClCompile Include="Main.cpp" />
@@ -94,7 +104,16 @@
     <ClCompile Include="renderer\shaders\CLightShader.cpp" />
   </ItemGroup>
   <ItemGroup>
+    <ClInclude Include="..\..\vendors\imgui\backends\imgui_impl_dx11.h" />
+    <ClInclude Include="..\..\vendors\imgui\backends\imgui_impl_win32.h" />
+    <ClInclude Include="..\..\vendors\imgui\imconfig.h" />
+    <ClInclude Include="..\..\vendors\imgui\imgui.h" />
+    <ClInclude Include="..\..\vendors\imgui\imgui_internal.h" />
+    <ClInclude Include="..\..\vendors\imgui\imstb_rectpack.h" />
+    <ClInclude Include="..\..\vendors\imgui\imstb_textedit.h" />
+    <ClInclude Include="..\..\vendors\imgui\imstb_truetype.h" />
     <ClInclude Include="CApplication.h" />
+    <ClInclude Include="CGui.h" />
     <ClInclude Include="CInput.h" />
     <ClInclude Include="CSystem.h" />
     <ClInclude Include="renderer\CD3DCamera.h" />

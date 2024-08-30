@@ -132,6 +132,11 @@ bool CSystem::Frame()
 
 LRESULT CALLBACK CSystem::MessageHandler(HWND hwnd, UINT umsg, WPARAM wparam, LPARAM lparam)
 {
+	if (m_pApplication->MessageHandler(hwnd, umsg, wparam, lparam))
+	{
+		return true;
+	}
+
 	switch (umsg)
 	{
 		// Check if a key has been pressed on the keyboard.
@@ -234,7 +239,7 @@ void CSystem::InitializeWindows(int& iScreenWidth, int& iScreenHeight)
 	SetFocus(m_hWnd);
 
 	// Hide the mouse cursor.
-	ShowCursor(false);
+	ShowCursor(true);
 }
 
 void CSystem::ShutdownWindows()
