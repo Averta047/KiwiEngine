@@ -6,6 +6,25 @@ inline float Cube_Rotation_X = 0.0f;
 inline float Cube_Rotation_Y = 0.0f;
 inline float Cube_Rotation_Z = 0.0f;
 
+inline float Cube_Pos_X = 0.0f;
+inline float Cube_Pos_Y = 0.0f;
+inline float Cube_Pos_Z = 0.0f;
+
+inline float Cube_Scale_X = 1.0f;
+inline float Cube_Scale_Y = 1.0f;
+inline float Cube_Scale_Z = 1.0f;
+
+inline char GPU_Name[128] = "*unknown*";
+
+inline float Camera_Rotation_X = 0.0f;
+inline float Camera_Rotation_Y = 0.0f;
+inline float Camera_Rotation_Z = 0.0f;
+
+inline float Camera_Pos_X = 0.0f;
+inline float Camera_Pos_Y = 0.0f;
+inline float Camera_Pos_Z = 0.0f;
+
+
 class CGui
 {
 public:

@@ -14,7 +14,7 @@
 #include "renderer/CD3DLight.h"
 #include "renderer/shaders/CLightShader.h"
 
-const bool FULL_SCREEN = false;
+const bool FULL_SCREEN = true;
 const bool VSYNC_ENABLED = true;
 const float SCREEN_DEPTH = 1000.0f;
 const float SCREEN_NEAR = 0.3f;
@@ -45,4 +45,5 @@ private:
 	//CColorShader* m_pColorShader;
 	//CTextureShader* m_pTextureShader;
 	CLightShader* m_pLightShader;
+	int m_iNumLights;
 };

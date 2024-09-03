@@ -10,9 +10,7 @@
 #include <d3dcompiler.h>
 #include <directxmath.h>
 #include <fstream>
-
 using namespace DirectX;
-using namespace std;
 
 class CTextureShader
 {
@@ -35,7 +33,7 @@ public:
 private:
 	bool InitializeShader(ID3D11Device* pDevice, HWND hWnd, WCHAR* vsFilename, WCHAR* psFilename);
 	void ShutdownShader();
-	void OutputShaderErrorMessage(ID3D10Blob* pErrorMessage, HWND hWnd, WCHAR* shaderFilename);
+	void OutputShaderErrorMessage(ID3D10Blob* pErrorMessage, HWND hWnd, WCHAR* ShaderFilename);
 
 	bool SetShaderParameters(ID3D11DeviceContext* pDeviceContext, XMMATRIX WorldMatrix, XMMATRIX ViewMatrix, XMMATRIX ProjectionMatrix, ID3D11ShaderResourceView* pTexture);
 	void RenderShader(ID3D11DeviceContext* pDeviceContext, int iIndexCount);

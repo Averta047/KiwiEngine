@@ -4,15 +4,13 @@
 //
 //================================================================//
 
-#pragma once
+const int NUM_LIGHTS = 4;
 
 #include <d3d11.h>
 #include <d3dcompiler.h>
 #include <directxmath.h>
 #include <fstream>
-
 using namespace DirectX;
-using namespace std;
 
 class CLightShader
 {
@@ -24,11 +22,14 @@ private:
 		XMMATRIX projection;
 	};
 
-	struct LightBufferType
+	struct LightColorBufferType
 	{
-		XMFLOAT4 diffuseColor;
-		XMFLOAT3 lightDirection;
-		float padding;  // Added extra padding so structure is a multiple of 16 for CreateBuffer function requirements.
+		XMFLOAT4 diffuseColor[NUM_LIGHTS];
+	};
+
+	struct LightPositionBufferType
+	{
+		XMFLOAT4 lightPosition[NUM_LIGHTS];
 	};
 
 public:
@@ -37,14 +38,14 @@ public:
 
 	bool Initialize(ID3D11Device* pDevice, HWND hWnd);
 	void Shutdown();
-	bool Render(ID3D11DeviceContext* pDeviceContext, int iIndexCount, XMMATRIX WorldMatrix, XMMATRIX ViewMatrix, XMMATRIX ProjectionMatrix, ID3D11ShaderResourceView* pTexture, XMFLOAT3 LightDirection, XMFLOAT4 DiffuseColor);
+	bool Render(ID3D11DeviceContext* pDeviceContext, int iIndexCount, XMMATRIX WorldMatrix, XMMATRIX ViewMatrix, XMMATRIX ProjectionMatrix, ID3D11ShaderResourceView* pTexture, XMFLOAT4 DiffuseColor[], XMFLOAT4 LightPosition[]);
 
 private:
-	bool InitializeShader(ID3D11Device*, HWND, WCHAR*, WCHAR*);
+	bool InitializeShader(ID3D11Device* device, HWND hwnd, WCHAR* vsFilename, WCHAR* psFilename);
 	void ShutdownShader();
-	void OutputShaderErrorMessage(ID3D10Blob*, HWND, WCHAR*);
+	void OutputShaderErrorMessage(ID3D10Blob* pErrorMessage, HWND hWnd, WCHAR* ShaderFilename);
 
-	bool SetShaderParameters(ID3D11DeviceContext* pDeviceContext, XMMATRIX WorldMatrix, XMMATRIX ViewMatrix, XMMATRIX ProjectionMatrix, ID3D11ShaderResourceView* pTexture, XMFLOAT3 LightDirection, XMFLOAT4 DiffuseColor);
+	bool SetShaderParameters(ID3D11DeviceContext* pDeviceContext, XMMATRIX WorldMatrix, XMMATRIX ViewMatrix, XMMATRIX ProjectionMatrix, ID3D11ShaderResourceView* pTexture, XMFLOAT4 DiffuseColor[], XMFLOAT4 LightPosition[]);
 	void RenderShader(ID3D11DeviceContext* pDeviceContext, int iIndexCount);
 
 private:
@@ -53,5 +54,6 @@ private:
 	ID3D11InputLayout* m_pLayout;
 	ID3D11SamplerState* m_pSampleState;
 	ID3D11Buffer* m_pMatrixBuffer;
-	ID3D11Buffer* m_pLightBuffer;
+	ID3D11Buffer* m_pLightColorBuffer;
+	ID3D11Buffer* m_pLightPositionBuffer;
 };

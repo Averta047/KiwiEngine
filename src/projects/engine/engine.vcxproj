@@ -95,13 +95,16 @@
     <ClCompile Include="CGui.cpp" />
     <ClCompile Include="CInput.cpp" />
     <ClCompile Include="CSystem.cpp" />
+    <ClCompile Include="CTimer.cpp" />
     <ClCompile Include="Main.cpp" />
     <ClCompile Include="renderer\CD3DCamera.cpp" />
     <ClCompile Include="renderer\CD3DModel.cpp" />
+    <ClCompile Include="renderer\CD3DSprite.cpp" />
     <ClCompile Include="renderer\CD3DTexture.cpp" />
     <ClCompile Include="renderer\CDirect3D11.cpp" />
     <ClCompile Include="renderer\CD3DLight.cpp" />
     <ClCompile Include="renderer\shaders\CLightShader.cpp" />
+    <ClCompile Include="renderer\shaders\CTextureShader.cpp" />
   </ItemGroup>
   <ItemGroup>
     <ClInclude Include="..\..\vendors\imgui\backends\imgui_impl_dx11.h" />
@@ -116,12 +119,15 @@
     <ClInclude Include="CGui.h" />
     <ClInclude Include="CInput.h" />
     <ClInclude Include="CSystem.h" />
+    <ClInclude Include="CTimer.h" />
     <ClInclude Include="renderer\CD3DCamera.h" />
     <ClInclude Include="renderer\CD3DModel.h" />
+    <ClInclude Include="renderer\CD3DSprite.h" />
     <ClInclude Include="renderer\CD3DTexture.h" />
     <ClInclude Include="renderer\CDirect3D11.h" />
     <ClInclude Include="renderer\CD3DLight.h" />
     <ClInclude Include="renderer\shaders\CLightShader.h" />
+    <ClInclude Include="renderer\shaders\CTextureShader.h" />
   </ItemGroup>
   <Import Project="$(VCTargetsPath)\Microsoft.Cpp.targets" />
   <ImportGroup Label="ExtensionTargets">

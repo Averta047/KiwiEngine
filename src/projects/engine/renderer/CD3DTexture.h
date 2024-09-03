@@ -1,44 +1,53 @@
-//========= Copyright KiwiEngine, All rights reserved ============//
-//
-// Purpose: 
-//
-//================================================================//
+////////////////////////////////////////////////////////////////////////////////
+// Filename: textureclass.h
+////////////////////////////////////////////////////////////////////////////////
+#ifndef _TEXTURECLASS_H_
+#define _TEXTURECLASS_H_
 
-#pragma once
 
+//////////////
+// INCLUDES //
+//////////////
 #include <d3d11.h>
 #include <stdio.h>
 
-class CD3DTexture
+
+////////////////////////////////////////////////////////////////////////////////
+// Class name: TextureClass
+////////////////////////////////////////////////////////////////////////////////
+class TextureClass
 {
 private:
-    struct TargaHeader
-    {
-        unsigned char data1[12];
-        unsigned short width;
-        unsigned short height;
-        unsigned char bpp;
-        unsigned char data2;
-    };
+	struct TargaHeader
+	{
+		unsigned char data1[12];
+		unsigned short width;
+		unsigned short height;
+		unsigned char bpp;
+		unsigned char data2;
+	};
 
 public:
-    CD3DTexture();
-    ~CD3DTexture();
+	TextureClass();
+	TextureClass(const TextureClass&);
+	~TextureClass();
 
-    bool Initialize(ID3D11Device* pDevice, ID3D11DeviceContext* pDeviceContext, char* filename);
-    void Shutdown();
+	bool Initialize(ID3D11Device*, ID3D11DeviceContext*, char*);
+	void Shutdown();
 
-    ID3D11ShaderResourceView* GetTexture() { return m_pTextureView; }
+	ID3D11ShaderResourceView* GetTexture();
 
-    int GetWidth() { return m_iWidth; }
-    int GetHeight() { return m_iHeight; }
-
-private:
-    bool LoadTarga32Bit(char*);
+	int GetWidth();
+    int GetHeight();
 
 private:
-    unsigned char* m_pTargaData;
-    ID3D11Texture2D* m_pTexture;
-    ID3D11ShaderResourceView* m_pTextureView;
-    int m_iWidth, m_iHeight;
+	bool LoadTarga32Bit(char*);
+
+private:
+	unsigned char* m_targaData;
+	ID3D11Texture2D* m_texture;
+	ID3D11ShaderResourceView* m_textureView;
+	int m_width, m_height;
 };
+
+#endif

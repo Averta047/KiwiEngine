@@ -75,6 +75,15 @@
     <ClCompile Include="..\..\vendors\imgui\backends\imgui_impl_win32.cpp">
       <Filter>vendors\imgui\backends</Filter>
     </ClCompile>
+    <ClCompile Include="renderer\shaders\CTextureShader.cpp">
+      <Filter>engine\renderer\shaders</Filter>
+    </ClCompile>
+    <ClCompile Include="renderer\CD3DSprite.cpp">
+      <Filter>engine\renderer</Filter>
+    </ClCompile>
+    <ClCompile Include="CTimer.cpp">
+      <Filter>engine</Filter>
+    </ClCompile>
   </ItemGroup>
   <ItemGroup>
     <ClInclude Include="CSystem.h">
@@ -130,6 +139,15 @@
     </ClInclude>
     <ClInclude Include="..\..\vendors\imgui\backends\imgui_impl_win32.h">
       <Filter>vendors\imgui\backends</Filter>
+    </ClInclude>
+    <ClInclude Include="renderer\shaders\CTextureShader.h">
+      <Filter>engine\renderer\shaders</Filter>
+    </ClInclude>
+    <ClInclude Include="renderer\CD3DSprite.h">
+      <Filter>engine\renderer</Filter>
+    </ClInclude>
+    <ClInclude Include="CTimer.h">
+      <Filter>engine</Filter>
     </ClInclude>
   </ItemGroup>
 </Project>
