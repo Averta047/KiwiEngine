@@ -1,25 +1,18 @@
-////////////////////////////////////////////////////////////////////////////////
-// Filename: timerclass.h
-////////////////////////////////////////////////////////////////////////////////
-#ifndef _TIMERCLASS_H_
-#define _TIMERCLASS_H_
+//========= Copyright KiwiEngine, All rights reserved ============//
+//
+// Purpose: 
+//
+//================================================================//
 
+#pragma once
 
-//////////////
-// INCLUDES //
-//////////////
 #include <windows.h>
 
-
-////////////////////////////////////////////////////////////////////////////////
-// Class name: TimerClass
-////////////////////////////////////////////////////////////////////////////////
-class TimerClass
+class CTimer
 {
 public:
-	TimerClass();
-	TimerClass(const TimerClass&);
-	~TimerClass();
+	CTimer();
+	~CTimer();
 
 	bool Initialize();
 	void Frame();
@@ -27,9 +20,7 @@ public:
 	float GetTime();
 
 private:
-	float m_frequency;
-	INT64 m_startTime;
-	float m_frameTime;
+	float m_fFrequency;
+	INT64 m_nStartTime;
+	float m_fFrameTime;
 };
-
-#endif

@@ -1,28 +1,22 @@
-///////////////////////////////////////////////////////////////////////////////
-// Filename: timerclass.cpp
-///////////////////////////////////////////////////////////////////////////////
-#include "timerclass.h"
+//========= Copyright KiwiEngine, All rights reserved ============//
+//
+// Purpose: 
+//
+//================================================================//
 
+#include "CTimer.h"
 
-TimerClass::TimerClass()
+CTimer::CTimer()
 {
 }
 
-
-TimerClass::TimerClass(const TimerClass& other)
+CTimer::~CTimer()
 {
 }
 
-
-TimerClass::~TimerClass()
-{
-}
-
-
-bool TimerClass::Initialize()
+bool CTimer::Initialize()
 {
 	INT64 frequency;
-
 
 	// Get the cycles per second speed for this system.
 	QueryPerformanceFrequency((LARGE_INTEGER*)&frequency);
@@ -32,38 +26,33 @@ bool TimerClass::Initialize()
 	}
 	
 	// Store it in floating point.
-	m_frequency = (float)frequency;
+	m_fFrequency = (float)frequency;
 
 	// Get the initial start time.
-	QueryPerformanceCounter((LARGE_INTEGER*)&m_startTime);
+	QueryPerformanceCounter((LARGE_INTEGER*)&m_nStartTime);
 
 	return true;
 }
 
-
-void TimerClass::Frame()
+void CTimer::Frame()
 {
 	INT64 currentTime;
 	INT64 elapsedTicks;
-
 
 	// Query the current time.
 	QueryPerformanceCounter((LARGE_INTEGER*)&currentTime);
 
 	// Calculate the difference in time since the last time we queried for the current time.
-	elapsedTicks = currentTime - m_startTime;
+	elapsedTicks = currentTime - m_nStartTime;
 
 	// Calculate the frame time.
-	m_frameTime = (float)elapsedTicks / m_frequency;
+	m_fFrameTime = (float)elapsedTicks / m_fFrequency;
 
 	// Restart the timer.
-	m_startTime = currentTime;
-
-	return;
+	m_nStartTime = currentTime;
 }
 
-
-float TimerClass::GetTime()
+float CTimer::GetTime()
 {
-	return m_frameTime;
+	return m_fFrameTime;
 }

@@ -22,7 +22,7 @@ inline float Camera_Rotation_Z = 0.0f;
 
 inline float Camera_Pos_X = 0.0f;
 inline float Camera_Pos_Y = 0.0f;
-inline float Camera_Pos_Z = 0.0f;
+inline float Camera_Pos_Z = -10.0f;
 
 
 class CGui

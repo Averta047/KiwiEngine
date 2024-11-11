@@ -10,12 +10,14 @@
 CApplication::CApplication()
 {
 	m_pGui = 0;
+	m_pTimer = 0;
 	m_pDirect3D = 0;
 	m_pD3DCamera = 0;
 	m_pD3DModel = 0;
 	m_pD3DLight = 0;
+	//m_pD3DSprite = 0;
 	//m_pColorShader = 0;
-	//m_pTextureShader = 0;
+	m_pTextureShader = 0;
 	m_pLightShader = 0;
 }
 
@@ -25,6 +27,7 @@ CApplication::~CApplication()
 
 bool CApplication::Initialize(int iScreenWidth, int iScreenHeight, HWND hWnd)
 {
+	char SpriteFilename[128];
 	char ModelFileName[128];
 	char TextureFileName[128];
 	bool result;
@@ -74,6 +77,29 @@ bool CApplication::Initialize(int iScreenWidth, int iScreenHeight, HWND hWnd)
 		return false;
 	}
 
+	// Set the sprite info file we will be using.
+	strcpy_s(SpriteFilename, "sprites/sprite_data_01.txt");
+
+	// Create and initialize the sprite object.
+	/*
+	m_pD3DSprite = new CD3DSprite;
+
+	result = m_pD3DSprite->Initialize(m_pDirect3D->GetDevice(), m_pDirect3D->GetDeviceContext(), iScreenWidth, iScreenHeight, SpriteFilename, 50, 50);
+	if (!result)
+	{
+		return false;
+	}
+	*/
+
+	// Create and initialize the timer object.
+	m_pTimer = new CTimer;
+
+	result = m_pTimer->Initialize();
+	if (!result)
+	{
+		return false;
+	}
+
 	/*
 	// Create and initialize the color shader object.
 	m_pColorShader = new CColorShader;
@@ -86,7 +112,6 @@ bool CApplication::Initialize(int iScreenWidth, int iScreenHeight, HWND hWnd)
 	}
 	*/
 
-	/*
 	// Create and initialize the texture shader object.
 	m_pTextureShader = new CTextureShader;
 
@@ -96,7 +121,6 @@ bool CApplication::Initialize(int iScreenWidth, int iScreenHeight, HWND hWnd)
 		MessageBox(hWnd, "Could not initialize the texture shader object.", "Error", MB_OK);
 		return false;
 	}
-	*/
 
 	m_pLightShader = new CLightShader;
 
@@ -147,6 +171,23 @@ void CApplication::Shutdown()
 		delete m_pGui;
 		m_pGui = 0;
 	}
+
+	// Release the sprite object.
+	/*
+	if (m_pD3DSprite)
+	{
+		m_pD3DSprite->Shutdown();
+		delete m_pD3DSprite;
+		m_pD3DSprite = 0;
+	}
+	*/
+
+	// Release the timer object.
+	if (m_pTimer)
+	{
+		delete m_pTimer;
+		m_pTimer = 0;
+	}
 	
 	// Release the light objects.
 	if (m_pD3DLight)
@@ -163,7 +204,6 @@ void CApplication::Shutdown()
 		m_pLightShader = 0;
 	}
 
-	/*
 	// Release the texture shader object.
 	if (m_pTextureShader)
 	{
@@ -171,7 +211,6 @@ void CApplication::Shutdown()
 		delete m_pTextureShader;
 		m_pTextureShader = 0;
 	}
-	*/
 
 	// Release the model object.
 	if (m_pD3DModel)
@@ -199,7 +238,17 @@ void CApplication::Shutdown()
 
 bool CApplication::Frame()
 {
+	float fFrameTime;
 	bool result;
+
+	// Update the system stats.
+	m_pTimer->Frame();
+
+	// Get the current frame time.
+	fFrameTime = m_pTimer->GetTime();
+
+	// Update the sprite object using the frame time.
+	//m_pD3DSprite->Update(fFrameTime);
 
 	// Render the graphics scene.
 	result = Render();
@@ -264,6 +313,22 @@ bool CApplication::Render()
 
 	// Render Gui on top.
 	m_pGui->Render();
+
+	// Put the sprite vertex and index buffers on the graphics pipeline to prepare them for drawing.
+	/*
+	result = m_pD3DSprite->Render(m_pDirect3D->GetDeviceContext());
+	if (!result)
+	{
+		return false;
+	}
+
+	// Render the sprite with the texture shader.
+	result = m_pTextureShader->Render(m_pDirect3D->GetDeviceContext(), m_pD3DSprite->GetIndexCount(), WorldMatrix, ViewMatrix, ProjectionMatrix, m_pD3DSprite->GetTexture());
+	if (!result)
+	{
+		return false;
+	}
+	*/
 
 	// Present the rendered scene to the screen.
 	m_pDirect3D->EndScene();

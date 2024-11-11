@@ -1,52 +1,47 @@
- ////////////////////////////////////////////////////////////////////////////////
-// Filename: spriteclass.cpp
-////////////////////////////////////////////////////////////////////////////////
-#include "spriteclass.h"
+//========= Copyright KiwiEngine, All rights reserved ============//
+//
+// Purpose: 
+//
+//================================================================//
 
+#include "CD3DSprite.h"
 
-SpriteClass::SpriteClass()
+CD3DSprite::CD3DSprite()
 {
-	m_vertexBuffer = 0;
-	m_indexBuffer = 0;
-	m_Textures = 0;
+	m_pVertexBuffer = 0;
+	m_pIndexBuffer = 0;
+	m_pTextures = 0;
 }
 
-
-SpriteClass::SpriteClass(const SpriteClass& other)
-{
-}
-
-
-SpriteClass::~SpriteClass()
+CD3DSprite::~CD3DSprite()
 {
 }
 
-
-bool SpriteClass::Initialize(ID3D11Device* device, ID3D11DeviceContext* deviceContext, int screenWidth, int screenHeight, char* spriteFilename, int renderX, int renderY)
+bool CD3DSprite::Initialize(ID3D11Device* pDevice, ID3D11DeviceContext* pDeviceContext, int iScreenWidth, int iScreenHeight, char* SpriteFilename, int iRenderX, int iRenderY)
 {
 	bool result;
 
 
 	// Store the screen size.
-	m_screenWidth = screenWidth;
-	m_screenHeight = screenHeight;
+	m_iScreenWidth = iScreenWidth;
+	m_iScreenHeight = iScreenHeight;
 
 	// Store where the sprite should be rendered to.
-    m_renderX = renderX;
-    m_renderY = renderY;
+    m_iRenderX = iRenderX;
+    m_iRenderY = iRenderY;
 
 	// Initialize the frame time for this sprite object.
-    m_frameTime = 0;
+    m_fFrameTime = 0;
 
 	// Initialize the vertex and index buffer that hold the geometry for the sprite bitmap.
-	result = InitializeBuffers(device);
+	result = InitializeBuffers(pDevice);
 	if(!result)
 	{
 		return false;
 	}
 
 	// Load the textures for this sprite.
-	result = LoadTextures(device, deviceContext, spriteFilename);
+	result = LoadTextures(pDevice, pDeviceContext, SpriteFilename);
 	if(!result)
 	{
 		return false;
@@ -55,75 +50,65 @@ bool SpriteClass::Initialize(ID3D11Device* device, ID3D11DeviceContext* deviceCo
 	return true;
 }
 
-
-void SpriteClass::Shutdown()
+void CD3DSprite::Shutdown()
 {
 	// Release the textures used for this sprite.
 	ReleaseTextures();
 
 	// Release the vertex and index buffers.
 	ShutdownBuffers();
-
-	return;
 }
 
-
-bool SpriteClass::Render(ID3D11DeviceContext* deviceContext)
+bool CD3DSprite::Render(ID3D11DeviceContext* pDeviceContext)
 {
 	bool result;
 
 
 	// Update the buffers if the position of the sprite has changed from its original position.
-	result = UpdateBuffers(deviceContext);
+	result = UpdateBuffers(pDeviceContext);
 	if(!result)
 	{
 		return false;
 	}
 
 	// Put the vertex and index buffers on the graphics pipeline to prepare them for drawing.
-	RenderBuffers(deviceContext);
+	RenderBuffers(pDeviceContext);
 
 	return true;
 }
 
-
-void SpriteClass::Update(float frameTime)
+void CD3DSprite::Update(float fFrameTime)
 {
     // Increment the frame time each frame.
-    m_frameTime += frameTime;
+    m_fFrameTime += fFrameTime;
 
     // Check if the frame time has reached the cycle time.
-    if(m_frameTime >= m_cycleTime)
+    if(m_fFrameTime >= m_fCycleTime)
     {
         // If it has then reset the frame time and cycle to the next sprite in the texture array.
-        m_frameTime -= m_cycleTime;
+        m_fFrameTime -= m_fCycleTime;
 
-        m_currentTexture++;
+        m_iCurrentTexture++;
 
         // If we are at the last sprite texture then go back to the beginning of the texture array to the first texture again.
-        if(m_currentTexture == m_textureCount)
+        if(m_iCurrentTexture == m_iTextureCount)
         {
-            m_currentTexture = 0;
+            m_iCurrentTexture = 0;
         }
     }
-
-    return;
 }
 
-
-int SpriteClass::GetIndexCount()
+int CD3DSprite::GetIndexCount()
 {
-	return m_indexCount;
+	return m_iIndexCount;
 }
 
-
-ID3D11ShaderResourceView* SpriteClass::GetTexture()
+ID3D11ShaderResourceView* CD3DSprite::GetTexture()
 {
-	return m_Textures[m_currentTexture].GetTexture();
+	return m_pTextures[m_iCurrentTexture].GetTexture();
 }
 
-
-bool SpriteClass::InitializeBuffers(ID3D11Device* device)
+bool CD3DSprite::InitializeBuffers(ID3D11Device* pDevice)
 {
 	VertexType* vertices;
 	unsigned long* indices;
@@ -134,33 +119,33 @@ bool SpriteClass::InitializeBuffers(ID3D11Device* device)
 
 
 	// Initialize the previous rendering position to negative one.
-    m_prevPosX = -1;
-    m_prevPosY = -1;
+    m_iPrevPosX = -1;
+    m_iPrevPosY = -1;
 
 	// Set the number of vertices in the vertex array.
-	m_vertexCount = 6;
+	m_iVertexCount = 6;
 
 	// Set the number of indices in the index array.
-	m_indexCount = m_vertexCount;
+	m_iIndexCount = m_iVertexCount;
 
 	// Create the vertex array.
-	vertices = new VertexType[m_vertexCount];
+	vertices = new VertexType[m_iVertexCount];
 
 	// Create the index array.
-	indices = new unsigned long[m_indexCount];
+	indices = new unsigned long[m_iIndexCount];
 
 	// Initialize vertex array to zeros at first.
-	memset(vertices, 0, (sizeof(VertexType) * m_vertexCount));
+	memset(vertices, 0, (sizeof(VertexType) * m_iVertexCount));
 
 	// Load the index array with data.
-	for(i=0; i<m_indexCount; i++)
+	for(i=0; i<m_iIndexCount; i++)
 	{
 		indices[i] = i;
 	}
 
 	// Set up the description of the dynamic vertex buffer.
 	vertexBufferDesc.Usage = D3D11_USAGE_DYNAMIC;
-	vertexBufferDesc.ByteWidth = sizeof(VertexType) * m_vertexCount;
+	vertexBufferDesc.ByteWidth = sizeof(VertexType) * m_iVertexCount;
 	vertexBufferDesc.BindFlags = D3D11_BIND_VERTEX_BUFFER;
 	vertexBufferDesc.CPUAccessFlags = D3D11_CPU_ACCESS_WRITE;
 	vertexBufferDesc.MiscFlags = 0;
@@ -172,7 +157,7 @@ bool SpriteClass::InitializeBuffers(ID3D11Device* device)
 	vertexData.SysMemSlicePitch = 0;
 
 	// Now finally create the vertex buffer.
-	result = device->CreateBuffer(&vertexBufferDesc, &vertexData, &m_vertexBuffer);
+	result = pDevice->CreateBuffer(&vertexBufferDesc, &vertexData, &m_pVertexBuffer);
 	if(FAILED(result))
 	{
 		return false;
@@ -180,7 +165,7 @@ bool SpriteClass::InitializeBuffers(ID3D11Device* device)
 
 	// Set up the description of the index buffer.
 	indexBufferDesc.Usage = D3D11_USAGE_DEFAULT;
-	indexBufferDesc.ByteWidth = sizeof(unsigned long) * m_indexCount;
+	indexBufferDesc.ByteWidth = sizeof(unsigned long) * m_iIndexCount;
 	indexBufferDesc.BindFlags = D3D11_BIND_INDEX_BUFFER;
 	indexBufferDesc.CPUAccessFlags = 0;
 	indexBufferDesc.MiscFlags = 0;
@@ -192,7 +177,7 @@ bool SpriteClass::InitializeBuffers(ID3D11Device* device)
 	indexData.SysMemSlicePitch = 0;
 
 	// Create the index buffer.
-	result = device->CreateBuffer(&indexBufferDesc, &indexData, &m_indexBuffer);
+	result = pDevice->CreateBuffer(&indexBufferDesc, &indexData, &m_pIndexBuffer);
 	if(FAILED(result))
 	{
 		return false;
@@ -208,28 +193,24 @@ bool SpriteClass::InitializeBuffers(ID3D11Device* device)
 	return true;
 }
 
-
-void SpriteClass::ShutdownBuffers()
+void CD3DSprite::ShutdownBuffers()
 {
 	// Release the index buffer.
-	if(m_indexBuffer)
+	if(m_pIndexBuffer)
 	{
-		m_indexBuffer->Release();
-		m_indexBuffer = 0;
+		m_pIndexBuffer->Release();
+		m_pIndexBuffer = 0;
 	}
 
 	// Release the vertex buffer.
-	if(m_vertexBuffer)
+	if(m_pVertexBuffer)
 	{
-		m_vertexBuffer->Release();
-		m_vertexBuffer = 0;
+		m_pVertexBuffer->Release();
+		m_pVertexBuffer = 0;
 	}
-
-	return;
 }
 
-
-bool SpriteClass::UpdateBuffers(ID3D11DeviceContext* deviceContent)
+bool CD3DSprite::UpdateBuffers(ID3D11DeviceContext* pDeviceContext)
 {
 	float left, right, top, bottom;
 	VertexType* vertices;
@@ -239,29 +220,29 @@ bool SpriteClass::UpdateBuffers(ID3D11DeviceContext* deviceContent)
 
 
 	 // If the position we are rendering this bitmap to hasn't changed then don't update the vertex buffer.
-    if((m_prevPosX == m_renderX) && (m_prevPosY == m_renderY))
+    if((m_iPrevPosX == m_iRenderX) && (m_iPrevPosY == m_iRenderY))
     {
         return true;
     }
 
 	// If the rendering location has changed then store the new position and update the vertex buffer.
-    m_prevPosX = m_renderX;
-    m_prevPosY = m_renderY;
+    m_iPrevPosX = m_iRenderX;
+    m_iPrevPosY = m_iRenderY;
 
 	// Create the vertex array.
-	vertices = new VertexType[m_vertexCount];
+	vertices = new VertexType[m_iVertexCount];
 
 	// Calculate the screen coordinates of the left side of the bitmap.
-	left = (float)((m_screenWidth / 2) * -1) + (float)m_renderX;
+	left = (float)((m_iScreenWidth / 2) * -1) + (float)m_iRenderX;
 
 	// Calculate the screen coordinates of the right side of the bitmap.
-	right = left + (float)m_bitmapWidth;
+	right = left + (float)m_iBitmapWidth;
 
 	// Calculate the screen coordinates of the top of the bitmap.
-	top = (float)(m_screenHeight / 2) - (float)m_renderY;
+	top = (float)(m_iScreenHeight / 2) - (float)m_iRenderY;
 
 	// Calculate the screen coordinates of the bottom of the bitmap.
-	bottom = top - (float)m_bitmapHeight;
+	bottom = top - (float)m_iBitmapHeight;
 
 	// Load the vertex array with data.
 	// First triangle.
@@ -285,7 +266,7 @@ bool SpriteClass::UpdateBuffers(ID3D11DeviceContext* deviceContent)
 	vertices[5].texture = XMFLOAT2(1.0f, 1.0f);
 
 	// Lock the vertex buffer.
-	result = deviceContent->Map(m_vertexBuffer, 0, D3D11_MAP_WRITE_DISCARD, 0, &mappedResource);
+	result = pDeviceContext->Map(m_pVertexBuffer, 0, D3D11_MAP_WRITE_DISCARD, 0, &mappedResource);
 	if(FAILED(result))
 	{
 		return false;
@@ -295,10 +276,10 @@ bool SpriteClass::UpdateBuffers(ID3D11DeviceContext* deviceContent)
 	dataPtr = (VertexType*)mappedResource.pData;
 
 	// Copy the data into the vertex buffer.
-	memcpy(dataPtr, (void*)vertices, (sizeof(VertexType) * m_vertexCount));
+	memcpy(dataPtr, (void*)vertices, (sizeof(VertexType) * m_iVertexCount));
 
 	// Unlock the vertex buffer.
-	deviceContent->Unmap(m_vertexBuffer, 0);
+	pDeviceContext->Unmap(m_pVertexBuffer, 0);
 
 	// Release the pointer reference.
 	dataPtr = 0;
@@ -310,8 +291,7 @@ bool SpriteClass::UpdateBuffers(ID3D11DeviceContext* deviceContent)
 	return true;
 }
 
-
-void SpriteClass::RenderBuffers(ID3D11DeviceContext* deviceContext)
+void CD3DSprite::RenderBuffers(ID3D11DeviceContext* pDeviceContext)
 {
 	unsigned int stride;
 	unsigned int offset;
@@ -322,45 +302,42 @@ void SpriteClass::RenderBuffers(ID3D11DeviceContext* deviceContext)
 	offset = 0;
 
 	// Set the vertex buffer to active in the input assembler so it can be rendered.
-	deviceContext->IASetVertexBuffers(0, 1, &m_vertexBuffer, &stride, &offset);
+	pDeviceContext->IASetVertexBuffers(0, 1, &m_pVertexBuffer, &stride, &offset);
 
 	// Set the index buffer to active in the input assembler so it can be rendered.
-	deviceContext->IASetIndexBuffer(m_indexBuffer, DXGI_FORMAT_R32_UINT, 0);
+	pDeviceContext->IASetIndexBuffer(m_pIndexBuffer, DXGI_FORMAT_R32_UINT, 0);
 
 	// Set the type of primitive that should be rendered from this vertex buffer, in this case triangles.
-	deviceContext->IASetPrimitiveTopology(D3D11_PRIMITIVE_TOPOLOGY_TRIANGLELIST);
-
-	return;
+	pDeviceContext->IASetPrimitiveTopology(D3D11_PRIMITIVE_TOPOLOGY_TRIANGLELIST);
 }
 
-
-bool SpriteClass::LoadTextures(ID3D11Device* device, ID3D11DeviceContext* deviceContext, char* filename)
+bool CD3DSprite::LoadTextures(ID3D11Device* pDevice, ID3D11DeviceContext* pDeviceContext, char* Filename)
 {
 	char textureFilename[128];
-    ifstream fin;
+    std::ifstream fin;
     int i, j;
     char input;
     bool result;
 
 
     // Open the sprite info data file.
-    fin.open(filename);
+    fin.open(Filename);
     if(fin.fail())
     {
         return false;
     }
 
     // Read in the number of textures.
-    fin >> m_textureCount;
+    fin >> m_iTextureCount;
 
     // Create and initialize the texture array with the texture count from the file.
-    m_Textures = new TextureClass[m_textureCount];
+    m_pTextures = new CD3DTexture[m_iTextureCount];
 
     // Read to start of next line.
     fin.get(input);
 
     // Read in each texture file name.
-    for(i=0; i<m_textureCount; i++)
+    for(i = 0; i < m_iTextureCount; i++)
     {
         j=0;
         fin.get(input);
@@ -373,7 +350,7 @@ bool SpriteClass::LoadTextures(ID3D11Device* device, ID3D11DeviceContext* device
         textureFilename[j] = '\0';
 
         // Once you have the filename then load the texture in the texture array.
-        result = m_Textures[i].Initialize(device, deviceContext, textureFilename);
+        result = m_pTextures[i].Initialize(pDevice, pDeviceContext, textureFilename);
         if(!result)
         {
             return false;
@@ -381,49 +358,44 @@ bool SpriteClass::LoadTextures(ID3D11Device* device, ID3D11DeviceContext* device
     }
 
     // Read in the cycle time.
-    fin >> m_cycleTime;
+    fin >> m_fCycleTime;
 
 	// Convert the integer milliseconds to float representation.
-	m_cycleTime = m_cycleTime * 0.001f;
+	m_fCycleTime = m_fCycleTime * 0.001f;
 
     // Close the file.
     fin.close();
 
     // Get the dimensions of the first texture and use that as the dimensions of the 2D sprite images.
-    m_bitmapWidth = m_Textures[0].GetWidth();
-    m_bitmapHeight = m_Textures[0].GetHeight();
+    m_iBitmapWidth = m_pTextures[0].GetWidth();
+    m_iBitmapHeight = m_pTextures[0].GetHeight();
 
     // Set the starting texture in the cycle to be the first one in the list.
-    m_currentTexture = 0;
+    m_iCurrentTexture = 0;
 
 	return true;
 }
 
-
-void SpriteClass::ReleaseTextures()
+void CD3DSprite::ReleaseTextures()
 {
     int i;
 
 
     // Release the texture objects.
-    if(m_Textures)
+    if(m_pTextures)
     {
-        for(i=0; i<m_textureCount; i++)
+        for(i=0; i<m_iTextureCount; i++)
         {
-            m_Textures[i].Shutdown();
+            m_pTextures[i].Shutdown();
         }
 
-        delete [] m_Textures;
-        m_Textures = 0;
+        delete [] m_pTextures;
+        m_pTextures = 0;
     }
-
-	return;
 }
 
-
-void SpriteClass::SetRenderLocation(int x, int y)
+void CD3DSprite::SetRenderLocation(int x, int y)
 {
-	m_renderX = x;
-	m_renderY = y;
-	return;
+	m_iRenderX = x;
+	m_iRenderY = y;
 }

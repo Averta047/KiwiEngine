@@ -1,29 +1,20 @@
-////////////////////////////////////////////////////////////////////////////////
-// Filename: spriteclass.h
-////////////////////////////////////////////////////////////////////////////////
-#ifndef _SPRITECLASS_H_
-#define _SPRITECLASS_H_
+//========= Copyright KiwiEngine, All rights reserved ============//
+//
+// Purpose: 
+//
+//================================================================//
 
+#pragma once
 
-//////////////
-// INCLUDES //
-//////////////
 #include <directxmath.h>
 #include <fstream>
+
 using namespace DirectX;
-using namespace std;
+//using namespace std;
 
+#include "CD3DTexture.h"
 
-///////////////////////
-// MY CLASS INCLUDES //
-///////////////////////
-#include "textureclass.h"
-
-
-////////////////////////////////////////////////////////////////////////////////
-// Class name: SpriteClass
-////////////////////////////////////////////////////////////////////////////////
-class SpriteClass
+class CD3DSprite
 {
 private:
 	struct VertexType
@@ -33,36 +24,33 @@ private:
 	};
 
 public:
-	SpriteClass();
-	SpriteClass(const SpriteClass&);
-	~SpriteClass();
+	CD3DSprite();
+	~CD3DSprite();
 
-	bool Initialize(ID3D11Device*, ID3D11DeviceContext*, int, int, char*, int, int);
+	bool Initialize(ID3D11Device* pDevice, ID3D11DeviceContext* pDeviceContext, int iScreenWidth, int iScreenHeight, char* SpriteFilename, int iRenderX, int iRenderY);
 	void Shutdown();
-	bool Render(ID3D11DeviceContext*);
+	bool Render(ID3D11DeviceContext* pDeviceContext);
 
-	void Update(float);
+	void Update(float fFrameTime);
 
 	int GetIndexCount();
 	ID3D11ShaderResourceView* GetTexture();
 
-	void SetRenderLocation(int, int);
+	void SetRenderLocation(int x, int y);
 
 private:
-	bool InitializeBuffers(ID3D11Device*);
+	bool InitializeBuffers(ID3D11Device* pDevice);
 	void ShutdownBuffers();
-	bool UpdateBuffers(ID3D11DeviceContext*);
-	void RenderBuffers(ID3D11DeviceContext*);
+	bool UpdateBuffers(ID3D11DeviceContext* pDeviceContext);
+	void RenderBuffers(ID3D11DeviceContext* pDeviceContext);
 
-	bool LoadTextures(ID3D11Device*, ID3D11DeviceContext*, char*);
+	bool LoadTextures(ID3D11Device* pDevice, ID3D11DeviceContext* pDeviceContext, char* SpriteFilename);
 	void ReleaseTextures();
 
 private:
-	ID3D11Buffer *m_vertexBuffer, *m_indexBuffer;
-	int m_vertexCount, m_indexCount, m_screenWidth, m_screenHeight, m_bitmapWidth, m_bitmapHeight, m_renderX, m_renderY, m_prevPosX, m_prevPosY;
-	TextureClass* m_Textures;
-	float m_frameTime, m_cycleTime;
-	int m_currentTexture, m_textureCount;
+	ID3D11Buffer *m_pVertexBuffer, *m_pIndexBuffer;
+	int m_iVertexCount, m_iIndexCount, m_iScreenWidth, m_iScreenHeight, m_iBitmapWidth, m_iBitmapHeight, m_iRenderX, m_iRenderY, m_iPrevPosX, m_iPrevPosY;
+	CD3DTexture* m_pTextures;
+	float m_fFrameTime, m_fCycleTime;
+	int m_iCurrentTexture, m_iTextureCount;
 };
-
-#endif

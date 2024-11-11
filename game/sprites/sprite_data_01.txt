@@ -1,0 +1,6 @@
+4
+sprite01.tga
+sprite02.tga
+sprite03.tga
+sprite04.tga
+250

@@ -1,28 +1,24 @@
-////////////////////////////////////////////////////////////////////////////////
-// Filename: textureclass.cpp
-////////////////////////////////////////////////////////////////////////////////
-#include "textureclass.h"
+//========= Copyright KiwiEngine, All rights reserved ============//
+//
+// Purpose: 
+//
+//================================================================//
+
+#include "CD3DTexture.h"
 
 
-TextureClass::TextureClass()
+CD3DTexture::CD3DTexture()
 {
-	m_targaData = 0;
-	m_texture = 0;
-	m_textureView = 0;
+	m_pTargaData = 0;
+	m_pTexture = 0;
+	m_pTextureView = 0;
 }
 
-
-TextureClass::TextureClass(const TextureClass& other)
-{
-}
-
-
-TextureClass::~TextureClass()
+CD3DTexture::~CD3DTexture()
 {
 }
 
-
-bool TextureClass::Initialize(ID3D11Device* device, ID3D11DeviceContext* deviceContext, char* filename)
+bool CD3DTexture::Initialize(ID3D11Device* device, ID3D11DeviceContext* deviceContext, char* filename)
 {
 	bool result;
 	D3D11_TEXTURE2D_DESC textureDesc;
@@ -39,8 +35,8 @@ bool TextureClass::Initialize(ID3D11Device* device, ID3D11DeviceContext* deviceC
 	}
 
 	// Setup the description of the texture.
-	textureDesc.Height = m_height;
-	textureDesc.Width = m_width;
+	textureDesc.Height = m_iHeight;
+	textureDesc.Width = m_iWidth;
 	textureDesc.MipLevels = 0;
 	textureDesc.ArraySize = 1;
 	textureDesc.Format = DXGI_FORMAT_R8G8B8A8_UNORM;
@@ -52,17 +48,17 @@ bool TextureClass::Initialize(ID3D11Device* device, ID3D11DeviceContext* deviceC
 	textureDesc.MiscFlags = D3D11_RESOURCE_MISC_GENERATE_MIPS;
 
 	// Create the empty texture.
-	hResult = device->CreateTexture2D(&textureDesc, NULL, &m_texture);
+	hResult = device->CreateTexture2D(&textureDesc, NULL, &m_pTexture);
 	if(FAILED(hResult))
 	{
 		return false;
 	}
 
 	// Set the row pitch of the targa image data.
-	rowPitch = (m_width * 4) * sizeof(unsigned char);
+	rowPitch = (m_iWidth * 4) * sizeof(unsigned char);
 
 	// Copy the targa image data into the texture.
-	deviceContext->UpdateSubresource(m_texture, 0, NULL, m_targaData, rowPitch, 0);
+	deviceContext->UpdateSubresource(m_pTexture, 0, NULL, m_pTargaData, rowPitch, 0);
 
 	// Setup the shader resource view description.
 	srvDesc.Format = textureDesc.Format;
@@ -71,57 +67,52 @@ bool TextureClass::Initialize(ID3D11Device* device, ID3D11DeviceContext* deviceC
 	srvDesc.Texture2D.MipLevels = -1;
 
 	// Create the shader resource view for the texture.
-	hResult = device->CreateShaderResourceView(m_texture, &srvDesc, &m_textureView);
+	hResult = device->CreateShaderResourceView(m_pTexture, &srvDesc, &m_pTextureView);
 	if(FAILED(hResult))
 	{
 		return false;
 	}
 
 	// Generate mipmaps for this texture.
-	deviceContext->GenerateMips(m_textureView);
+	deviceContext->GenerateMips(m_pTextureView);
 
 	// Release the targa image data now that the image data has been loaded into the texture.
-	delete [] m_targaData;
-	m_targaData = 0;
+	delete [] m_pTargaData;
+	m_pTargaData = 0;
 
 	return true;
 }
 
-
-void TextureClass::Shutdown()
+void CD3DTexture::Shutdown()
 {
 	// Release the texture view resource.
-	if(m_textureView)
+	if(m_pTextureView)
 	{
-		m_textureView->Release();
-		m_textureView = 0;
+		m_pTextureView->Release();
+		m_pTextureView = 0;
 	}
 
 	// Release the texture.
-	if(m_texture)
+	if(m_pTexture)
 	{
-		m_texture->Release();
-		m_texture = 0;
+		m_pTexture->Release();
+		m_pTexture = 0;
 	}
 
 	// Release the targa data.
-	if(m_targaData)
+	if(m_pTargaData)
 	{
-		delete [] m_targaData;
-		m_targaData = 0;
+		delete [] m_pTargaData;
+		m_pTargaData = 0;
 	}
-
-	return;
 }
 
-
-ID3D11ShaderResourceView* TextureClass::GetTexture()
+ID3D11ShaderResourceView* CD3DTexture::GetTexture()
 {
-	return m_textureView;
+	return m_pTextureView;
 }
 
-
-bool TextureClass::LoadTarga32Bit(char* filename)
+bool CD3DTexture::LoadTarga32Bit(char* filename)
 {
 	int error, bpp, imageSize, index, i, j, k;
 	FILE* filePtr;
@@ -145,8 +136,8 @@ bool TextureClass::LoadTarga32Bit(char* filename)
 	}
 
 	// Get the important information from the header.
-	m_height = (int)targaFileHeader.height;
-	m_width = (int)targaFileHeader.width;
+	m_iHeight = (int)targaFileHeader.height;
+	m_iWidth = (int)targaFileHeader.width;
 	bpp = (int)targaFileHeader.bpp;
 
 	// Check that it is 32 bit and not 24 bit.
@@ -156,7 +147,7 @@ bool TextureClass::LoadTarga32Bit(char* filename)
 	}
 
 	// Calculate the size of the 32 bit image data.
-	imageSize = m_width * m_height * 4;
+	imageSize = m_iWidth * m_iHeight * 4;
 
 	// Allocate memory for the targa image data.
 	targaImage = new unsigned char[imageSize];
@@ -176,23 +167,23 @@ bool TextureClass::LoadTarga32Bit(char* filename)
 	}
 
 	// Allocate memory for the targa destination data.
-	m_targaData = new unsigned char[imageSize];
+	m_pTargaData = new unsigned char[imageSize];
 
 	// Initialize the index into the targa destination data array.
 	index = 0;
 
 	// Initialize the index into the targa image data.
-	k = (m_width * m_height * 4) - (m_width * 4);
+	k = (m_iWidth * m_iHeight * 4) - (m_iWidth * 4);
 
 	// Now copy the targa image data into the targa destination array in the correct order since the targa format is stored upside down and also is not in RGBA order.
-	for(j=0; j<m_height; j++)
+	for(j=0; j< m_iHeight; j++)
 	{
-		for(i=0; i<m_width; i++)
+		for(i=0; i< m_iWidth; i++)
 		{
-			m_targaData[index + 0] = targaImage[k + 2];  // Red.
-			m_targaData[index + 1] = targaImage[k + 1];  // Green.
-			m_targaData[index + 2] = targaImage[k + 0];  // Blue
-			m_targaData[index + 3] = targaImage[k + 3];  // Alpha
+			m_pTargaData[index + 0] = targaImage[k + 2];  // Red.
+			m_pTargaData[index + 1] = targaImage[k + 1];  // Green.
+			m_pTargaData[index + 2] = targaImage[k + 0];  // Blue
+			m_pTargaData[index + 3] = targaImage[k + 3];  // Alpha
 
 			// Increment the indexes into the targa data.
 			k += 4;
@@ -200,7 +191,7 @@ bool TextureClass::LoadTarga32Bit(char* filename)
 		}
 
 		// Set the targa image data index back to the preceding row at the beginning of the column since its reading it in upside down.
-		k -= (m_width * 8);
+		k -= (m_iWidth * 8);
 	}
 
 	// Release the targa image data now that it was copied into the destination array.
@@ -210,14 +201,12 @@ bool TextureClass::LoadTarga32Bit(char* filename)
 	return true;
 }
 
-
-int TextureClass::GetWidth()
+int CD3DTexture::GetWidth()
 {
-    return m_width;
+    return m_iWidth;
 }
 
-
-int TextureClass::GetHeight()
+int CD3DTexture::GetHeight()
 {
-    return m_height;
+    return m_iHeight;
 }

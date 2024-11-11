@@ -1,21 +1,15 @@
-////////////////////////////////////////////////////////////////////////////////
-// Filename: textureclass.h
-////////////////////////////////////////////////////////////////////////////////
-#ifndef _TEXTURECLASS_H_
-#define _TEXTURECLASS_H_
+//========= Copyright KiwiEngine, All rights reserved ============//
+//
+// Purpose: 
+//
+//================================================================//
 
+#pragma once 
 
-//////////////
-// INCLUDES //
-//////////////
 #include <d3d11.h>
 #include <stdio.h>
 
-
-////////////////////////////////////////////////////////////////////////////////
-// Class name: TextureClass
-////////////////////////////////////////////////////////////////////////////////
-class TextureClass
+class CD3DTexture
 {
 private:
 	struct TargaHeader
@@ -28,11 +22,10 @@ private:
 	};
 
 public:
-	TextureClass();
-	TextureClass(const TextureClass&);
-	~TextureClass();
+	CD3DTexture();
+	~CD3DTexture();
 
-	bool Initialize(ID3D11Device*, ID3D11DeviceContext*, char*);
+	bool Initialize(ID3D11Device* pDevice, ID3D11DeviceContext* pDeviceContent, char* filename);
 	void Shutdown();
 
 	ID3D11ShaderResourceView* GetTexture();
@@ -41,13 +34,11 @@ public:
     int GetHeight();
 
 private:
-	bool LoadTarga32Bit(char*);
+	bool LoadTarga32Bit(char* filename);
 
 private:
-	unsigned char* m_targaData;
-	ID3D11Texture2D* m_texture;
-	ID3D11ShaderResourceView* m_textureView;
-	int m_width, m_height;
+	unsigned char* m_pTargaData;
+	ID3D11Texture2D* m_pTexture;
+	ID3D11ShaderResourceView* m_pTextureView;
+	int m_iWidth, m_iHeight;
 };
-
-#endif
