@@ -6,6 +6,7 @@ inline float Cube_Rotation_X = 0.0f;
 inline float Cube_Rotation_Y = 0.0f;
 inline float Cube_Rotation_Z = 0.0f;
 
+<<<<<<< HEAD
 inline float Cube_Pos_X = 0.0f;
 inline float Cube_Pos_Y = 0.0f;
 inline float Cube_Pos_Z = 0.0f;
@@ -25,6 +26,8 @@ inline float Camera_Pos_Y = 0.0f;
 inline float Camera_Pos_Z = -10.0f;
 
 
+=======
+>>>>>>> parent of 04df0c7 (9.3.24 - backup)
 class CGui
 {
 public:

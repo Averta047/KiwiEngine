@@ -42,9 +42,6 @@ bool CApplication::Initialize(int iScreenWidth, int iScreenHeight, HWND hWnd)
 		return false;
 	}
 
-	int temp01 = 0;
-	m_pDirect3D->GetVideoCardInfo(GPU_Name, temp01);
-
 	m_pGui = new CGui();
 	result = m_pGui->Initialize(hWnd, m_pDirect3D->GetDevice(), m_pDirect3D->GetDeviceContext());
 	if (!result)
@@ -61,8 +58,7 @@ bool CApplication::Initialize(int iScreenWidth, int iScreenHeight, HWND hWnd)
 
 	// Set the initial position of the camera.
 	//m_pD3DCamera->SetPosition(0.0f, 0.0f, -5.0f);
-	m_pD3DCamera->SetPosition(Camera_Pos_X, Camera_Pos_Y, Camera_Pos_Z);
-	m_pD3DCamera->SetRotation(Camera_Rotation_X, Camera_Rotation_Y, Camera_Rotation_Z);
+	m_pD3DCamera->SetPosition(0.0f, 0.0f, -10.0f);
 
 	// Set the file name of the model.
 	strcpy_s(ModelFileName, "models/cube.txt");
@@ -131,24 +127,11 @@ bool CApplication::Initialize(int iScreenWidth, int iScreenHeight, HWND hWnd)
 		return false;
 	}
 
-	// Set the number of lights we will use.
-	m_iNumLights = 4;
+	// Create and initialize the light object.
+	m_pD3DLight = new CD3DLight;
 
-	// Create and initialize the light objects array.
-	m_pD3DLight = new CD3DLight[m_iNumLights];
-
-	// Manually set the color and position of each light.
-	m_pD3DLight[0].SetDiffuseColor(1.0f, 0.0f, 0.0f, 1.0f);  // Red
-	m_pD3DLight[0].SetPosition(-3.0f, 1.0f, 3.0f);
-
-	m_pD3DLight[1].SetDiffuseColor(0.0f, 1.0f, 0.0f, 1.0f);  // Green
-	m_pD3DLight[1].SetPosition(3.0f, 1.0f, 3.0f);
-
-	m_pD3DLight[2].SetDiffuseColor(0.0f, 0.0f, 1.0f, 1.0f);  // Blue
-	m_pD3DLight[2].SetPosition(-3.0f, 1.0f, -3.0f);
-
-	m_pD3DLight[3].SetDiffuseColor(1.0f, 1.0f, 1.0f, 1.0f);  // White
-	m_pD3DLight[3].SetPosition(3.0f, 1.0f, -3.0f);
+	m_pD3DLight->SetDiffuseColor(1.0f, 1.0f, 1.0f, 1.0f);
+	m_pD3DLight->SetDirection(0.0f, 0.0f, 1.0f);
 
 	return true;
 }
@@ -189,10 +172,9 @@ void CApplication::Shutdown()
 		m_pTimer = 0;
 	}
 	
-	// Release the light objects.
 	if (m_pD3DLight)
 	{
-		delete[] m_pD3DLight;
+		delete m_pD3DLight;
 		m_pD3DLight = 0;
 	}
 
@@ -263,7 +245,6 @@ bool CApplication::Frame()
 bool CApplication::Render()
 {
 	XMMATRIX WorldMatrix, ViewMatrix, ProjectionMatrix, RotateMatrix, TranslateMatrix, ScaleMatrix, SrMatrix;
-	XMFLOAT4 DiffuseColor[4], LightPosition[4];
 	bool result;
 
 
@@ -272,40 +253,28 @@ bool CApplication::Render()
 
 	// Generate the view matrix based on the camera's position.
 	m_pD3DCamera->Render();
-	m_pD3DCamera->SetPosition(Camera_Pos_X, Camera_Pos_Y, Camera_Pos_Z);
-	m_pD3DCamera->SetRotation(Camera_Rotation_X, Camera_Rotation_Y, Camera_Rotation_Z);
 
 	// Get the world, view, and projection matrices from the camera and d3d objects.
 	m_pDirect3D->GetWorldMatrix(WorldMatrix);
 	m_pD3DCamera->GetViewMatrix(ViewMatrix);
 	m_pDirect3D->GetProjectionMatrix(ProjectionMatrix);
 
-	// Get the light properties.
-	for (int i = 0; i < m_iNumLights; i++)
-	{
-		// Create the diffuse color array from the four light colors.
-		DiffuseColor[i] = m_pD3DLight[i].GetDiffuseColor();
+	RotateMatrix = XMMatrixRotationX(Cube_Rotation_X) *
+		XMMatrixRotationY(Cube_Rotation_Y) *
+		XMMatrixRotationZ(Cube_Rotation_Z);
+    TranslateMatrix = XMMatrixTranslation(-2.0f, 0.0f, 0.0f);  // Build the translation matrix.
 
-		// Create the light position array from the four light positions.
-		LightPosition[i] = m_pD3DLight[i].GetPosition();
-	}
-
-	ScaleMatrix = XMMatrixScaling(Cube_Scale_X, Cube_Scale_Y, Cube_Scale_Z);  // Build the scaling matrix.
-
-	RotateMatrix = XMMatrixRotationX(Cube_Rotation_X * 0.0174532925f) *
-		XMMatrixRotationY(Cube_Rotation_Y * 0.0174532925f) *
-		XMMatrixRotationZ(Cube_Rotation_Z * 0.0174532925f);
-    TranslateMatrix = XMMatrixTranslation(Cube_Pos_X, Cube_Pos_Y, Cube_Pos_Z);  // Build the translation matrix.
-
-	SrMatrix = XMMatrixMultiply(ScaleMatrix, RotateMatrix);
-	WorldMatrix = XMMatrixMultiply(SrMatrix, TranslateMatrix);
+    // Multiply them together to create the final world transformation matrix.
+	WorldMatrix = XMMatrixRotationX(Cube_Rotation_X) *
+		XMMatrixRotationY(Cube_Rotation_Y) *
+		XMMatrixRotationZ(Cube_Rotation_Z);
 
 	// Put the model vertex and index buffers on the graphics pipeline to prepare them for drawing.
 	m_pD3DModel->Render(m_pDirect3D->GetDeviceContext());
 
 	// Render the model using the light shader.
 	result = m_pLightShader->Render(m_pDirect3D->GetDeviceContext(), m_pD3DModel->GetIndexCount(), WorldMatrix, ViewMatrix, ProjectionMatrix, m_pD3DModel->GetTexture(),
-		DiffuseColor, LightPosition);
+		m_pD3DLight->GetDirection(), m_pD3DLight->GetDiffuseColor());
 	if (!result)
 	{
 		return false;

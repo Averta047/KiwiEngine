@@ -99,43 +99,15 @@ void CGui::Render()
     ImGui::NewFrame();
     {
         // Main Debug
-        ImGui::Begin("Infos");
+        ImGui::Begin("Debug");
         {
             ImGui::Text("FPS: %.1f", io.Framerate);
-            ImGui::Text("GPU: %s", GPU_Name);
+            ImGui::SeparatorText("Cube");
+            ImGui::SliderFloat("Rotation X", &Cube_Rotation_X, 0, 5);
+            ImGui::SliderFloat("Rotation Y", &Cube_Rotation_Y, 0, 5);
+            ImGui::SliderFloat("Rotation Z", &Cube_Rotation_Z, 0, 5);
         }
-        ImGui::End();
-
-        ImGui::Begin("Cube");
-        {
-            ImGui::SeparatorText("Rotation");
-            ImGui::SliderFloat("Rotation X", &Cube_Rotation_X, 0, 360);
-            ImGui::SliderFloat("Rotation Y", &Cube_Rotation_Y, 0, 360);
-            ImGui::SliderFloat("Rotation Z", &Cube_Rotation_Z, 0, 360);
-            ImGui::SeparatorText("Position");
-            ImGui::SliderFloat("Position X", &Cube_Pos_X, 0, 5);
-            ImGui::SliderFloat("Position Y", &Cube_Pos_Y, 0, 5);
-            ImGui::SliderFloat("Position Z", &Cube_Pos_Z, 0, 5);
-            ImGui::SeparatorText("Scale");
-            ImGui::SliderFloat("Scale X", &Cube_Scale_X, 0, 5);
-            ImGui::SliderFloat("Scale Y", &Cube_Scale_Y, 0, 5);
-            ImGui::SliderFloat("Scale Z", &Cube_Scale_Z, 0, 5);
-        }
-        ImGui::End();
-
-        ImGui::Begin("Camera");
-        {
-            ImGui::SeparatorText("Rotation");
-            ImGui::SliderFloat("Rotation X", &Camera_Rotation_X, 0, 360);
-            ImGui::SliderFloat("Rotation Y", &Camera_Rotation_Y, 0, 360);
-            ImGui::SliderFloat("Rotation Z", &Camera_Rotation_Z, 0, 360);
-            ImGui::SeparatorText("Position");
-            ImGui::DragFloat("Position X", &Camera_Pos_X, 1.0f, -100, 100);
-            ImGui::DragFloat("Position Y", &Camera_Pos_Y, 1.0f, -100, 100);
-            ImGui::DragFloat("Position Z", &Camera_Pos_Z, 1.0f, -100, 100);
-        }
-        ImGui::End();
-
+        ImGui::EndChild();
     }
     ImGui::Render();
 
