@@ -4,6 +4,7 @@
 //
 //================================================================//
 <<<<<<< HEAD
+<<<<<<< HEAD
 
 #include "CD3DTexture.h"
 =======
@@ -11,6 +12,11 @@
 
 #include "CD3DTexture.h"
 
+=======
+
+#include "CD3DTexture.h"
+
+>>>>>>> parent of 04df0c7 (9.3.24 - backup)
 CD3DTexture::CD3DTexture()
 {
 	m_pTargaData = 0;
@@ -23,7 +29,11 @@ CD3DTexture::~CD3DTexture()
 }
 
 <<<<<<< HEAD
+<<<<<<< HEAD
 bool CD3DTexture::Initialize(ID3D11Device* device, ID3D11DeviceContext* deviceContext, char* filename)
+=======
+bool CD3DTexture::Initialize(ID3D11Device* pDevice, ID3D11DeviceContext* pDeviceContext, char* filename)
+>>>>>>> parent of 04df0c7 (9.3.24 - backup)
 =======
 bool CD3DTexture::Initialize(ID3D11Device* pDevice, ID3D11DeviceContext* pDeviceContext, char* filename)
 >>>>>>> parent of 04df0c7 (9.3.24 - backup)
@@ -43,6 +53,7 @@ bool CD3DTexture::Initialize(ID3D11Device* pDevice, ID3D11DeviceContext* pDevice
 	}
 
 	// Setup the description of the texture.
+<<<<<<< HEAD
 <<<<<<< HEAD
 	textureDesc.Height = m_iHeight;
 	textureDesc.Width = m_iWidth;
@@ -76,16 +87,40 @@ bool CD3DTexture::Initialize(ID3D11Device* pDevice, ID3D11DeviceContext* pDevice
 	hResult = pDevice->CreateTexture2D(&m_pSampleState, NULL, &m_pTexture);
 	if (FAILED(hResult))
 >>>>>>> parent of 04df0c7 (9.3.24 - backup)
+=======
+	m_pSampleState.Height = m_iHeight;
+	m_pSampleState.Width = m_iWidth;
+	m_pSampleState.MipLevels = 0;
+	m_pSampleState.ArraySize = 1;
+	m_pSampleState.Format = DXGI_FORMAT_R8G8B8A8_UNORM;
+	m_pSampleState.SampleDesc.Count = 1;
+	m_pSampleState.SampleDesc.Quality = 0;
+	m_pSampleState.Usage = D3D11_USAGE_DEFAULT;
+	m_pSampleState.BindFlags = D3D11_BIND_SHADER_RESOURCE | D3D11_BIND_RENDER_TARGET;
+	m_pSampleState.CPUAccessFlags = 0;
+	m_pSampleState.MiscFlags = D3D11_RESOURCE_MISC_GENERATE_MIPS;
+
+	// Create the empty texture.
+	hResult = pDevice->CreateTexture2D(&m_pSampleState, NULL, &m_pTexture);
+	if (FAILED(hResult))
+>>>>>>> parent of 04df0c7 (9.3.24 - backup)
 	{
 		return false;
 	}
 
 	// Set the row pitch of the targa image data.
 <<<<<<< HEAD
+<<<<<<< HEAD
 	rowPitch = (m_iWidth * 4) * sizeof(unsigned char);
 
 	// Copy the targa image data into the texture.
 	deviceContext->UpdateSubresource(m_pTexture, 0, NULL, m_pTargaData, rowPitch, 0);
+=======
+	RowPitch = (m_iWidth * 4) * sizeof(unsigned char);
+
+	// Copy the targa image data into the texture.
+	pDeviceContext->UpdateSubresource(m_pTexture, 0, NULL, m_pTargaData, RowPitch, 0);
+>>>>>>> parent of 04df0c7 (9.3.24 - backup)
 =======
 	RowPitch = (m_iWidth * 4) * sizeof(unsigned char);
 
@@ -101,8 +136,13 @@ bool CD3DTexture::Initialize(ID3D11Device* pDevice, ID3D11DeviceContext* pDevice
 
 	// Create the shader resource view for the texture.
 <<<<<<< HEAD
+<<<<<<< HEAD
 	hResult = device->CreateShaderResourceView(m_pTexture, &srvDesc, &m_pTextureView);
 	if(FAILED(hResult))
+=======
+	hResult = pDevice->CreateShaderResourceView(m_pTexture, &srvDesc, &m_pTextureView);
+	if (FAILED(hResult))
+>>>>>>> parent of 04df0c7 (9.3.24 - backup)
 =======
 	hResult = pDevice->CreateShaderResourceView(m_pTexture, &srvDesc, &m_pTextureView);
 	if (FAILED(hResult))
@@ -113,10 +153,17 @@ bool CD3DTexture::Initialize(ID3D11Device* pDevice, ID3D11DeviceContext* pDevice
 
 	// Generate mipmaps for this texture.
 <<<<<<< HEAD
+<<<<<<< HEAD
 	deviceContext->GenerateMips(m_pTextureView);
 
 	// Release the targa image data now that the image data has been loaded into the texture.
 	delete [] m_pTargaData;
+=======
+	pDeviceContext->GenerateMips(m_pTextureView);
+
+	// Release the targa image data now that the image data has been loaded into the texture.
+	delete[] m_pTargaData;
+>>>>>>> parent of 04df0c7 (9.3.24 - backup)
 =======
 	pDeviceContext->GenerateMips(m_pTextureView);
 
@@ -132,7 +179,11 @@ void CD3DTexture::Shutdown()
 {
 	// Release the texture view resource.
 <<<<<<< HEAD
+<<<<<<< HEAD
 	if(m_pTextureView)
+=======
+	if (m_pTextureView)
+>>>>>>> parent of 04df0c7 (9.3.24 - backup)
 =======
 	if (m_pTextureView)
 >>>>>>> parent of 04df0c7 (9.3.24 - backup)
@@ -143,7 +194,11 @@ void CD3DTexture::Shutdown()
 
 	// Release the texture.
 <<<<<<< HEAD
+<<<<<<< HEAD
 	if(m_pTexture)
+=======
+	if (m_pTexture)
+>>>>>>> parent of 04df0c7 (9.3.24 - backup)
 =======
 	if (m_pTexture)
 >>>>>>> parent of 04df0c7 (9.3.24 - backup)
@@ -154,9 +209,15 @@ void CD3DTexture::Shutdown()
 
 	// Release the targa data.
 <<<<<<< HEAD
+<<<<<<< HEAD
 	if(m_pTargaData)
 	{
 		delete [] m_pTargaData;
+=======
+	if (m_pTargaData)
+	{
+		delete[] m_pTargaData;
+>>>>>>> parent of 04df0c7 (9.3.24 - backup)
 =======
 	if (m_pTargaData)
 	{
@@ -166,6 +227,7 @@ void CD3DTexture::Shutdown()
 	}
 }
 
+<<<<<<< HEAD
 <<<<<<< HEAD
 ID3D11ShaderResourceView* CD3DTexture::GetTexture()
 {
@@ -182,11 +244,18 @@ bool CD3DTexture::LoadTarga32Bit(char* filename)
 =======
 bool CD3DTexture::LoadTarga32Bit(char* filename)
 {
+=======
+bool CD3DTexture::LoadTarga32Bit(char* filename)
+{
+>>>>>>> parent of 04df0c7 (9.3.24 - backup)
 	int iError, iBPP, iImageSize, iIndex;
 	FILE* pFile;
 	unsigned int iCount;
 	TargaHeader TargaFileHeader;
 	unsigned char* pTargaImage;
+<<<<<<< HEAD
+>>>>>>> parent of 04df0c7 (9.3.24 - backup)
+=======
 >>>>>>> parent of 04df0c7 (9.3.24 - backup)
 
 
@@ -206,9 +275,15 @@ bool CD3DTexture::LoadTarga32Bit(char* filename)
 
 	// Get the important information from the header.
 <<<<<<< HEAD
+<<<<<<< HEAD
 	m_iHeight = (int)targaFileHeader.height;
 	m_iWidth = (int)targaFileHeader.width;
 	bpp = (int)targaFileHeader.bpp;
+=======
+	m_iHeight = (int)TargaFileHeader.height;
+	m_iWidth = (int)TargaFileHeader.width;
+	iBPP = (int)TargaFileHeader.bpp;
+>>>>>>> parent of 04df0c7 (9.3.24 - backup)
 =======
 	m_iHeight = (int)TargaFileHeader.height;
 	m_iWidth = (int)TargaFileHeader.width;
@@ -223,7 +298,11 @@ bool CD3DTexture::LoadTarga32Bit(char* filename)
 
 	// Calculate the size of the 32 bit image data.
 <<<<<<< HEAD
+<<<<<<< HEAD
 	imageSize = m_iWidth * m_iHeight * 4;
+=======
+	iImageSize = m_iWidth * m_iHeight * 4;
+>>>>>>> parent of 04df0c7 (9.3.24 - backup)
 =======
 	iImageSize = m_iWidth * m_iHeight * 4;
 >>>>>>> parent of 04df0c7 (9.3.24 - backup)
@@ -247,7 +326,11 @@ bool CD3DTexture::LoadTarga32Bit(char* filename)
 
 	// Allocate memory for the targa destination data.
 <<<<<<< HEAD
+<<<<<<< HEAD
 	m_pTargaData = new unsigned char[imageSize];
+=======
+	m_pTargaData = new unsigned char[iImageSize];
+>>>>>>> parent of 04df0c7 (9.3.24 - backup)
 =======
 	m_pTargaData = new unsigned char[iImageSize];
 >>>>>>> parent of 04df0c7 (9.3.24 - backup)
@@ -256,6 +339,7 @@ bool CD3DTexture::LoadTarga32Bit(char* filename)
 	iIndex = 0;
 
 	// Initialize the index into the targa image data.
+<<<<<<< HEAD
 <<<<<<< HEAD
 	k = (m_iWidth * m_iHeight * 4) - (m_iWidth * 4);
 
@@ -276,10 +360,22 @@ bool CD3DTexture::LoadTarga32Bit(char* filename)
 	{
 		for (int i = 0; i < m_iWidth; i++)
 		{
+=======
+	int k = (m_iWidth * m_iHeight * 4) - (m_iWidth * 4);
+
+	// Now copy the targa image data into the targa destination array in the correct order since the targa format is stored upside down and also is not in RGBA order.
+	for (int j = 0; j < m_iHeight; j++)
+	{
+		for (int i = 0; i < m_iWidth; i++)
+		{
+>>>>>>> parent of 04df0c7 (9.3.24 - backup)
 			m_pTargaData[iIndex + 0] = pTargaImage[k + 2];  // Red.
 			m_pTargaData[iIndex + 1] = pTargaImage[k + 1];  // Green.
 			m_pTargaData[iIndex + 2] = pTargaImage[k + 0];  // Blue
 			m_pTargaData[iIndex + 3] = pTargaImage[k + 3];  // Alpha
+<<<<<<< HEAD
+>>>>>>> parent of 04df0c7 (9.3.24 - backup)
+=======
 >>>>>>> parent of 04df0c7 (9.3.24 - backup)
 
 			// Increment the indexes into the targa data.
@@ -298,6 +394,7 @@ bool CD3DTexture::LoadTarga32Bit(char* filename)
 	return true;
 }
 <<<<<<< HEAD
+<<<<<<< HEAD
 
 int CD3DTexture::GetWidth()
 {
@@ -308,5 +405,7 @@ int CD3DTexture::GetHeight()
 {
     return m_iHeight;
 }
+=======
+>>>>>>> parent of 04df0c7 (9.3.24 - backup)
 =======
 >>>>>>> parent of 04df0c7 (9.3.24 - backup)
